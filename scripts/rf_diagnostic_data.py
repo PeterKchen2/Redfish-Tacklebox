@@ -20,6 +20,7 @@ import redfish_utilities
 import traceback
 import sys
 from redfish.messages import RedfishPasswordChangeRequiredError
+
 # Get the input arguments
 argget = argparse.ArgumentParser( description = "A tool to collect diagnostic data from a log service on a Redfish service" )
 argget.add_argument( "--user", "-u", type = str, required = True, help = "The user name for authentication" )

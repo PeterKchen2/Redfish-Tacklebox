@@ -20,6 +20,7 @@ import redfish_utilities
 import traceback
 import sys
 from redfish.messages import RedfishPasswordChangeRequiredError
+
 # Get the input arguments
 argget = argparse.ArgumentParser( description = "A tool to walk a Redfish service and list component information" )
 argget.add_argument( "--user", "-u", type = str, required = True, help = "The user name for authentication" )
@@ -84,4 +85,5 @@ finally:
         redfish_obj.logout()
     except Exception as e:
         pass
+
 sys.exit( exit_code )

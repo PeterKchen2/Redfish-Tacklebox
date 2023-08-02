@@ -93,4 +93,5 @@ finally:
         redfish_obj.logout()
     except Exception as e:
         pass
+
 sys.exit( exit_code )
