@@ -16,6 +16,7 @@ import json
 import os
 import redfish
 import sys
+import re
 from redfish.messages import RedfishPasswordChangeRequiredError
 
 # Get the input arguments
@@ -29,6 +30,17 @@ argget.add_argument( "--body", "-b", type = str, required = False, help = "The b
 argget.add_argument( "--verbose", "-v", action = "store_true", help = "Indicates if HTTP response codes and headers are displayed", default = False )
 args = argget.parse_args()
 
+def ifmatch_header(redfish_obj, path, headers=None):
+    if headers is None:
+        headers = {}
+    try:
+        response = redfish_obj.get(path)
+        etag = response.getheader( "ETag" )
+        if etag is not None:
+            headers[ "If-Match"] = etag
+    except Exception:
+        pass
+    return headers
 # Connect to the service
 try:
     redfish_obj = redfish.redfish_client( base_url = args.rhost, username = args.user, password = args.password , timeout=5, max_retry=3)
@@ -74,9 +86,11 @@ if args.method == "HEAD":
 elif args.method == "POST":
     resp = redfish_obj.post( args.request, body = body )
 elif args.method == "PATCH":
-    resp = redfish_obj.patch( args.request, body = body )
+    headers = ifmatch_header(redfish_obj, args.request, headers = headers)
+    resp = redfish_obj.patch( args.request, body = body, headers = headers)
 elif args.method == "PUT":
-    resp = redfish_obj.put( args.request, body = body )
+    headers = ifmatch_header(redfish_obj, args.request, headers = headers)
+    resp = redfish_obj.put( args.request, body = body, headers = headers)
 elif args.method == "DELETE":
     resp = redfish_obj.delete( args.request )
 else:
